@@ -7,7 +7,7 @@ from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException
-from scraper_interface import CommentScraper
+from .scraper_interface import CommentScraper
 
 class YouTubeCommentScraper(CommentScraper):
     def __init__(self, video_url, driver):

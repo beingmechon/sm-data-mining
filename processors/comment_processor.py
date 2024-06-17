@@ -3,7 +3,7 @@ import numpy as np
 from sklearn.cluster import AgglomerativeClustering
 from sentence_transformers import SentenceTransformer
 from transformers import BartTokenizer, BartForConditionalGeneration
-from processor_interface import CommentProcessor
+from .processor_interface import CommentProcessor
 
 class CommentClusterSummarizer(CommentProcessor):
     def __init__(self):

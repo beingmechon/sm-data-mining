@@ -1,6 +1,6 @@
-# main.py
-import time
 import json
+from selenium.webdriver.chrome.service import Service as ChromeService
+from webdriver_manager.chrome import ChromeDriverManager
 from selenium import webdriver
 from config.settings import VIDEO_URL
 from utils.logger import setup_logging
@@ -8,10 +8,12 @@ from utils.dependencies import setup_dependencies
 from scrapers.youtube_scraper import YouTubeCommentScraper
 from processors.comment_processor import CommentClusterSummarizer
 
-def main():
-    # Setup
+def main(headless):
     logger = setup_logging()
-    driver = webdriver.Chrome(options=setup_dependencies())
+    if headless:
+        driver = webdriver.Chrome(options=setup_dependencies())
+    else:
+        driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()))
 
     try:
         # Step 1: Scrape YouTube Comments
@@ -50,4 +52,5 @@ def main():
         driver.quit()
 
 if __name__ == '__main__':
-    main()
+    headless = False
+    main(headless)
