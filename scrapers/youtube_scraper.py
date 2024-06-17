@@ -1,4 +1,5 @@
 import time
+import json
 
 from selenium import webdriver
 from selenium.webdriver.common.by import By
@@ -46,3 +47,9 @@ class YouTubeCommentScraper(CommentScraper):
 
         finally:
             self.driver.quit()
+
+    def save_comments_to_json(self, file_path):
+        comments = self.scrape_comments()  # Example call to scrape_comments method
+        with open(file_path, 'w', encoding='utf-8') as f:
+            json.dump(comments, f, ensure_ascii=False, indent=4)
+        print(f"Comments have been saved to {file_path}")

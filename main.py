@@ -47,7 +47,7 @@ def main(headless):
         logger.info("YouTube comments have been scraped, clustered, and summarized.")
 
     except Exception as e:
-        logger.error(f"Error occurred: {str(e)}")
+        logger.error(f"Error occurred: {str(e)}", exc_info=True)
     finally:
         driver.quit()
 
