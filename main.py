@@ -27,8 +27,15 @@ def main(headless):
 
         scraper.save_comments_to_json(os.path.join('./data/comments/', f'comments_{video_id}.json'))
 
+        # with open("data\comments\comments_avffSSsVklU.json", "r", encoding="utf8") as f:
+        #     comments = json.load(f)
+        #     video_id = "avffSSsVklU"
+
+        # print(comments[0])
+
         # Step 2: Cluster and Summarize Comments
         summarizer = CommentClusterSummarizer()
+        comments = summarizer.process_comments(comments)
         similarity_matrix = summarizer.get_similarity_matrix(comments)
         cluster_labels = summarizer.get_cluster_labels(similarity_matrix, threshold=0.7)
 

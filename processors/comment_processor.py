@@ -11,6 +11,9 @@ class CommentClusterSummarizer(CommentProcessor):
         self.tokenizer = BartTokenizer.from_pretrained('facebook/bart-large-cnn')
         self.summarization_model = BartForConditionalGeneration.from_pretrained('facebook/bart-large-cnn')
 
+    def process_comments(self, comments):
+        return self.remove_timestamps(comments)
+
     def get_similarity_matrix(self, comments):
         embeddings = self.model.encode(comments)
         return np.matmul(embeddings, embeddings.T)
@@ -29,7 +32,7 @@ class CommentClusterSummarizer(CommentProcessor):
 
             if input_length > char_limit:
                 max_length = input_length if input_length < 150 else 150
-                min_length = char_limit if input_length < char_limit else input_length
+                min_length = input_length if input_length < char_limit else char_limit
 
                 inputs = self.tokenizer(input_text, return_tensors='pt', max_length=1024, truncation=True)
                 summary_ids = self.summarization_model.generate(inputs['input_ids'], 
