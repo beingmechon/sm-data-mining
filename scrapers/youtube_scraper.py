@@ -14,6 +14,7 @@ class YouTubeCommentScraper(CommentScraper):
     def __init__(self, video_url, driver):
         self.video_url = video_url
         self.driver = driver
+        self.comment_list = []
 
     def scrape_comments(self):
         try:
@@ -40,16 +41,16 @@ class YouTubeCommentScraper(CommentScraper):
             comments = WebDriverWait(self.driver, 10).until(
                 EC.presence_of_all_elements_located((By.XPATH, '//*[@id="content-text"]'))
             )
-            comment_list = [comment.text for comment in comments]
+            self.comment_list = [comment.text for comment in comments]
             html_content = self.driver.page_source
 
-            return comment_list, html_content
+            return self.comment_list, html_content
 
         finally:
             self.driver.quit()
 
     def save_comments_to_json(self, file_path):
-        comments = self.scrape_comments()  # Example call to scrape_comments method
+        # comments, _ = self.scrape_comments()
         with open(file_path, 'w', encoding='utf-8') as f:
-            json.dump(comments, f, ensure_ascii=False, indent=4)
+            json.dump(self.comment_list, f, ensure_ascii=False, indent=4)
         print(f"Comments have been saved to {file_path}")
