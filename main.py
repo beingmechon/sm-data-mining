@@ -23,7 +23,7 @@ def main(headless):
         # Step 1: Scrape YouTube Comments
         video_id = VIDEO_URL.split("=")[1]
         scraper = YouTubeCommentScraper(VIDEO_URL, driver)
-        comments, html_content = scraper.scrape_comments()
+        comments, _ = scraper.scrape_comments()
 
         scraper.save_comments_to_json(os.path.join('./data/comments/', f'comments_{video_id}.json'))
 
@@ -36,6 +36,8 @@ def main(headless):
         # Step 2: Cluster and Summarize Comments
         summarizer = CommentClusterSummarizer()
         comments = summarizer.process_comments(comments)
+        # print(comments)
+
         similarity_matrix = summarizer.get_similarity_matrix(comments)
         cluster_labels = summarizer.get_cluster_labels(similarity_matrix, threshold=0.7)
 

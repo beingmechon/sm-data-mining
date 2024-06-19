@@ -3,3 +3,4 @@ webdriver-manager
 sentence-transformers
 transformers
 scikit-learn
+langdetect

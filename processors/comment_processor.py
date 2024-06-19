@@ -2,17 +2,19 @@ import json
 import numpy as np
 from sklearn.cluster import AgglomerativeClustering
 from sentence_transformers import SentenceTransformer
-from transformers import BartTokenizer, BartForConditionalGeneration
+from transformers import BartTokenizer, BartForConditionalGeneration, AutoModelForSeq2SeqLM
 from .processor_interface import CommentProcessor
 
 class CommentClusterSummarizer(CommentProcessor):
     def __init__(self):
+        super().__init__()
         self.model = SentenceTransformer('sentence-transformers/all-MiniLM-L6-v2')
         self.tokenizer = BartTokenizer.from_pretrained('facebook/bart-large-cnn')
         self.summarization_model = BartForConditionalGeneration.from_pretrained('facebook/bart-large-cnn')
+        # self.translate_model = AutoModelForSeq2SeqLM.from_pretrained("facebook/nllb-200-distilled-600M")
 
     def process_comments(self, comments):
-        return self.remove_timestamps(comments)
+        return self.clean_translate_comments(comments)
 
     def get_similarity_matrix(self, comments):
         embeddings = self.model.encode(comments)
