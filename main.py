@@ -1,16 +1,17 @@
 import json
-import os 
+import os
+import argparse
 
 from selenium.webdriver.chrome.service import Service as ChromeService
 from webdriver_manager.chrome import ChromeDriverManager
 from selenium import webdriver
-from config.settings import VIDEO_URL
+# from config.settings import VIDEO_URL
 from utils.logger import setup_logging
 from utils.dependencies import setup_dependencies, init_setup
 from scrapers.youtube_scraper import YouTubeCommentScraper
 from processors.comment_processor import CommentClusterSummarizer
 
-def main(headless):
+def main(headless, video_url=None, comments_file=None):
     logger = setup_logging()
     init_setup()
 
@@ -20,23 +21,20 @@ def main(headless):
         driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()))
 
     try:
-        # Step 1: Scrape YouTube Comments
-        video_id = VIDEO_URL.split("=")[1]
-        scraper = YouTubeCommentScraper(VIDEO_URL, driver)
-        comments, _ = scraper.scrape_comments()
+        if comments_file:
+            with open(comments_file, "r", encoding="utf-8") as f:
+                comments = json.load(f)
+            video_id = os.path.splitext(os.path.basename(comments_file))[0]  # Extract video_id from filename
+        else:
+            video_id = video_url.split("=")[1]
+            scraper = YouTubeCommentScraper(video_url, driver)
+            comments, _ = scraper.scrape_comments()
 
-        scraper.save_comments_to_json(os.path.join('./data/comments/', f'comments_{video_id}.json'))
-
-        # with open("data\comments\comments_avffSSsVklU.json", "r", encoding="utf8") as f:
-        #     comments = json.load(f)
-        #     video_id = "avffSSsVklU"
-
-        # print(comments[0])
+            scraper.save_comments_to_json(os.path.join('./data/comments/', f'comments_{video_id}.json'))
 
         # Step 2: Cluster and Summarize Comments
         summarizer = CommentClusterSummarizer()
         comments = summarizer.process_comments(comments)
-        # print(comments)
 
         similarity_matrix = summarizer.get_similarity_matrix(comments)
         cluster_labels = summarizer.get_cluster_labels(similarity_matrix, threshold=0.7)
@@ -65,5 +63,14 @@ def main(headless):
         driver.quit()
 
 if __name__ == '__main__':
-    headless = False
-    main(headless)
+    parser = argparse.ArgumentParser(description='YouTube Comment Clustering and Summarization')
+    parser.add_argument('--headless', action='store_true', help='Run Chrome WebDriver in headless mode')
+    parser.add_argument('--video_url', type=str, help='YouTube video URL to scrape comments from')
+    parser.add_argument('--comments_file', type=str, help='Path to a JSON file containing pre-existing comments')
+
+    args = parser.parse_args()
+    
+    if not (args.video_url or args.comments_file):
+        parser.error('Please provide either --video_url or --comments_file')
+
+    main(args.headless, args.video_url, args.comments_file)

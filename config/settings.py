@@ -1,5 +1,5 @@
 # Video URL to scrape comments from
-VIDEO_URL = 'https://www.youtube.com/watch?v=avffSSsVklU'
+# VIDEO_URL = 'https://www.youtube.com/watch?v=avffSSsVklU'
 
 # Logging configuration file path
 LOGGING_CONFIG_FILE = 'config/logging.conf'
