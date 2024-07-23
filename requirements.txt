@@ -4,3 +4,4 @@ sentence-transformers
 transformers
 scikit-learn
 langdetect
+google-api-python-client
