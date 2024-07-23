@@ -5,6 +5,7 @@ from sentence_transformers import SentenceTransformer
 from transformers import BartTokenizer, BartForConditionalGeneration, AutoModelForSeq2SeqLM
 from .processor_interface import CommentProcessor
 
+
 class CommentClusterSummarizer(CommentProcessor):
     def __init__(self):
         super().__init__()

@@ -35,7 +35,7 @@ class CommentProcessor(ABC):
             logging.error(f"Error occurred while cleaning comment: {str(e)}")
             return comment
 
-    def clean_translate_comments(self, comments):
+    def clean_translate_comments(self, comments) -> list:
         translated_comments = []
         lang_tokenizer_map = {}
 
