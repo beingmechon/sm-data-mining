@@ -8,7 +8,12 @@ from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException
+
+
+import googleapiclient.discovery
+
 from scraper_interface import CommentScraper
+from api_interface import APIFetch
 
 class YouTubeCommentScraper(CommentScraper):
     def __init__(self, video_url, driver):
@@ -59,10 +64,70 @@ class YouTubeCommentScraper(CommentScraper):
         finally:
             self.driver.quit()
 
+    def get_comments(self) -> list[str]:
+        return self.comment_list
+
+    def save_comments_to_json(self, file_path):
+        with open(file_path, 'w', encoding='utf-8') as f:
+            json.dump(self.comment_list, f, ensure_ascii=False, indent=4)
+        print(f"Comments have been saved to {file_path}")
+
+
+class YoutubeAPI(APIFetch):
+    def __init__(self, api_key: str, videoID: str, part: str="snippet", maxResults: int=100, order:str="relevance", textFormat: str="plainText"):
+        self.api_key = api_key
+        self.videoID = videoID
+        self.part = part
+        self.maxResults = maxResults
+        self.order = order
+        self.textFormat = textFormat
+
+    def fetch_from_api(self, page_token=None):
+        api_service_name = "youtube"
+        api_version = "v3"
+        dev_key = self.api_key
+        
+        youtube = googleapiclient.discovery.build(
+            api_service_name, api_version, developerKey = dev_key)
+        
+        request = youtube.commentThreads().list(
+            part=self.part,
+            videoId=self.videoID,
+            maxResults=self.maxResults,
+            order=self.order,
+            page_token=page_token)
+        
+        response = request.execute()
+
+        return response['items']
+    
+    def fetch_comments_threads(self):
+        raw_comments = []
+        page_token = None
+
+        while True:
+            raw_data = self.fetch_from_api(page_token)
+            
+            if raw_data is None:
+                break
+            
+            raw_comments.extend(raw_data.get("items", []))
+            page_token = raw_data.get("nextPageToken")
+
+            if not page_token:
+                break
+
+        return raw_comments
+    
+    def fetch_comments(self) -> list[str]:
+        api_comments = self.fetch_comments_threads()
+        self.comments = [comment['snippet']['topLevelComment']['snippet']['textDisplay'] for comment in api_comments]
+        return self.comments
+    
     def save_comments_to_json(self, file_path):
         # comments, _ = self.scrape_comments()
         with open(file_path, 'w', encoding='utf-8') as f:
-            json.dump(self.comment_list, f, ensure_ascii=False, indent=4)
+            json.dump(self.comments, f, ensure_ascii=False, indent=4)
         print(f"Comments have been saved to {file_path}")
 
 

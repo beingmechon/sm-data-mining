@@ -1,15 +1,14 @@
-#!/usr/bin/env python
+import sys
+import os
 
-"""
-Module for transliterating Tamil to English and ViceVersa.
-Added TODO functionality. 
-"""
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+sys.path.append(os.path.dirname(SCRIPT_DIR))
 
 import json
 import requests
 from collections import deque
 
-import unicode_mapping
+from utils import unicode_mapping
 
 class Mapper:
     def __init__(self, charmap):
@@ -151,3 +150,5 @@ if __name__ == "__main__":
         json.dump(output_data, f, ensure_ascii=False, indent=4)
 
     print(f"Output saved to {output_file}")
+
+

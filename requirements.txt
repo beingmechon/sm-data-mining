@@ -1,7 +1,18 @@
 selenium
 webdriver-manager
 sentence-transformers
-transformers
+# transformers
+transformers==4.37
 scikit-learn
 langdetect
 google-api-python-client
+ai4bharat-transliteration
+fasttext-wheel
+pandas
+IndicTransTokenizer
+indic-nlp-library-IT2@git+https://github.com/beingmechon/indic_nlp_library
+pip==24.0
+setuptools==68.2.2
+sacremoses
+sentencepiece
+sacrebleu>=2.3.1

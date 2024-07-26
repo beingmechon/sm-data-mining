@@ -168,3 +168,4 @@ data/
 #.idea/
 
 *.ini
+models/

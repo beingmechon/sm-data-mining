@@ -8,8 +8,8 @@ from selenium import webdriver
 # from config.settings import VIDEO_URL
 from utils.logger import setup_logging
 from utils.dependencies import setup_dependencies, init_setup
-from scrapers.youtube_scraper import YouTubeCommentScraper
-from processors.comment_processor import CommentClusterSummarizer
+from AggregateData.aggregate_youtube import YouTubeCommentScraper
+from processors.cluster_comments import CommentClusterSummarizer
 
 def main(headless, video_url=None, comments_file=None):
     logger = setup_logging()

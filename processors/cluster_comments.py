@@ -15,7 +15,7 @@ class CommentClusterSummarizer(CommentProcessor):
         # self.translate_model = AutoModelForSeq2SeqLM.from_pretrained("facebook/nllb-200-distilled-600M")
 
     def process_comments(self, comments):
-        return self.clean_translate_comments(comments)
+        return self.translate_comments(comments)
 
     def get_similarity_matrix(self, comments):
         embeddings = self.model.encode(comments)
